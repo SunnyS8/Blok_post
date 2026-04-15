@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  owner
+  analyst
+  store_manager
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      Role
+  storeId   Int?
+  store     Store?   @relation(fields: [storeId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Store {
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   String
+  region    String
+  managerId Int      @unique
+  manager   User     @relation(fields: [managerId], references: [id])
+  sales     Sale[]
+  inventory Inventory[]
+  activities MarketingActivity[]
+  kpiCalculations KPICalculation[]
+}
+
+model ProductCategory {
+  id       Int       @id @default(autoincrement())
+  name     String
+  parentId Int?
+  parent   ProductCategory? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children ProductCategory[] @relation("CategoryHierarchy")
+  products Product[]
+}
+
+model Product {
+  id         Int       @id @default(autoincrement())
+  name       String
+  categoryId Int
+  category   ProductCategory @relation(fields: [categoryId], references: [id])
+  sku        String    @unique
+  description String?
+  price      Float
+  inventory  Inventory[]
+}
+
+model Sale {
+  id         Int      @id @default(autoincrement())
+  storeId    Int
+  store      Store    @relation(fields: [storeId], references: [id])
+  date       DateTime
+  totalAmount Float
+  items      Json
+}
+
+model Inventory {
+  id        Int      @id @default(autoincrement())
+  storeId   Int
+  store     Store    @relation(fields: [storeId], references: [id])
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  lastUpdated DateTime @default(now())
+
+  @@unique([storeId, productId])
+}
+
+model MarketingActivity {
+  id         Int      @id @default(autoincrement())
+  storeId    Int
+  store      Store    @relation(fields: [storeId], references: [id])
+  activityType String
+  description String?
+  cost       Float?
+  date       DateTime
+  impactMetric Json?
+}
+
+model KPIDictionary {
+  id          Int      @id @default(autoincrement())
+  name        String
+  formula     String
+  description String?
+  category    String
+  calculations KPICalculation[]
+}
+
+model KPICalculation {
+  id        Int      @id @default(autoincrement())
+  kpiId     Int
+  kpi       KPIDictionary @relation(fields: [kpiId], references: [id])
+  storeId   Int
+  store     Store    @relation(fields: [storeId], references: [id])
+  date      DateTime
+  value     Float
+  calculatedAt DateTime @default(now())
+
+  @@unique([kpiId, storeId, date])
+}
