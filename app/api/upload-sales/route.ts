@@ -174,11 +174,11 @@ export async function POST(request: Request) {
             storeId: sale.storeId,
             date: new Date(sale.date),
             totalAmount,
-            items: sale.items.map((item) => ({
+            items: JSON.stringify(sale.items.map((item) => ({
               productId: item.productId,
               quantity: item.quantity,
               price: item.unitPrice,
-            })),
+            }))),
           },
         });
         createdSales.push({ id: created.id, storeId: created.storeId, receiptNumber: sale.receiptNumber, totalAmount });

@@ -1,0 +1,32 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: #f7f7fb;
+  color: #111827;
+}
+
+body {
+  font-family: Inter, system-ui, sans-serif;
+}
+
+h1, h2 {
+  margin: 0 0 16px;
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+section {
+  margin-bottom: 28px;
+}
+
+pre {
+  background: #1f2937;
+  color: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  overflow-x: auto;
+}

@@ -1,0 +1,265 @@
+.container {
+  min-height: 100vh;
+  background: #f3f4f6;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 16px 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.backLink {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: #5568d3;
+}
+
+.main {
+  max-width: 900px;
+  margin: 32px auto;
+  padding: 0 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+}
+
+.card h1 {
+  margin: 0 0 8px;
+  font-size: 32px;
+  color: #111827;
+}
+
+.subtitle {
+  margin: 0 0 24px;
+  font-size: 16px;
+  color: #6b7280;
+}
+
+.form {
+  margin-bottom: 40px;
+}
+
+.fileInput {
+  margin-bottom: 24px;
+}
+
+.fileLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.fileLabel:hover {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+.fileInputHidden {
+  display: none;
+}
+
+.uploadIcon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.uploadText {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  text-align: center;
+}
+
+.uploadHint {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+.button {
+  width: 100%;
+  padding: 12px 16px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.button:hover:not(:disabled) {
+  background: #5568d3;
+  transform: translateY(-2px);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.message {
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.message.success {
+  background: #dcfce7;
+  color: #166534;
+  border-left: 4px solid #22c55e;
+}
+
+.message.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border-left: 4px solid #ef4444;
+}
+
+.info {
+  margin-bottom: 32px;
+  padding: 20px;
+  background: #f0f4ff;
+  border-left: 4px solid #667eea;
+  border-radius: 8px;
+}
+
+.info h3 {
+  margin: 0 0 12px;
+  color: #667eea;
+  font-size: 16px;
+}
+
+.info p {
+  margin: 0 0 12px;
+  color: #374151;
+  font-size: 14px;
+}
+
+.info ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.info li {
+  padding: 6px 0;
+  color: #374151;
+  font-size: 14px;
+}
+
+.info li::before {
+  content: '✓ ';
+  margin-right: 8px;
+  color: #667eea;
+  font-weight: bold;
+}
+
+.info code {
+  background: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #667eea;
+}
+
+.example {
+  padding: 20px;
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+  border-radius: 8px;
+}
+
+.example h3 {
+  margin: 0 0 16px;
+  color: #92400e;
+  font-size: 16px;
+}
+
+.example table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.example thead {
+  background: #fef3c7;
+  border-bottom: 2px solid #f59e0b;
+}
+
+.example th {
+  padding: 12px 8px;
+  text-align: left;
+  color: #78350f;
+  font-weight: 600;
+}
+
+.example td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #f59e0b;
+  color: #78350f;
+}
+
+.example tbody tr:hover {
+  background: #fef9e7;
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 20px;
+  }
+
+  .card h1 {
+    font-size: 24px;
+  }
+
+  .fileLabel {
+    padding: 24px 16px;
+  }
+
+  .uploadIcon {
+    font-size: 36px;
+  }
+
+  .example table {
+    font-size: 12px;
+  }
+
+  .example th,
+  .example td {
+    padding: 8px 4px;
+  }
+}

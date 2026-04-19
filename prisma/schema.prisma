@@ -7,32 +7,29 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
-}
-
-enum Role {
-  owner
-  analyst
-  store_manager
+  url      = env("DATABASE_URL")
 }
 
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
-  role      Role
+  role      String
   storeId   Int?
-  store     Store?   @relation(fields: [storeId], references: [id])
+  managedStore Store? @relation("StoreManager")
+  usersInStore Store[] @relation("StoreUsers")
   createdAt DateTime @default(now())
 }
 
 model Store {
   id        Int      @id @default(autoincrement())
+  code      String?  @unique
   name      String
   address   String
   region    String
   managerId Int      @unique
-  manager   User     @relation(fields: [managerId], references: [id])
+  manager   User     @relation("StoreManager", fields: [managerId], references: [id])
+  users     User[]   @relation("StoreUsers")
   sales     Sale[]
   inventory Inventory[]
   activities MarketingActivity[]
@@ -65,7 +62,7 @@ model Sale {
   store      Store    @relation(fields: [storeId], references: [id])
   date       DateTime
   totalAmount Float
-  items      Json
+  items      String
 }
 
 model Inventory {
@@ -88,7 +85,7 @@ model MarketingActivity {
   description String?
   cost       Float?
   date       DateTime
-  impactMetric Json?
+  impactMetric String?
 }
 
 model KPIDictionary {
