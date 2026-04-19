@@ -53,6 +53,18 @@ create table order_items (
 );
 ```
 
+## Таблица profiles
+
+```sql
+create table profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  email text unique not null,
+  full_name text,
+  role text not null default 'user',
+  created_at timestamptz not null default now()
+);
+```
+
 ## Пример данных
 
 ```sql

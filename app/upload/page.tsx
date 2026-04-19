@@ -1,12 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { getSupabaseClient } from '@/lib/supabaseClient';
 import styles from './upload.module.css';
 
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [status, setStatus] = useState('Проверка сессии...');
+  const [sessionChecked, setSessionChecked] = useState(false);
+  const router = useRouter();
+  const supabase = getSupabaseClient();
+
+  useEffect(() => {
+    async function checkSession() {
+      if (!supabase) {
+        setMessage({ type: 'error', text: 'Supabase не настроен. Проверьте переменные окружения.' });
+        setStatus('Supabase не настроен');
+        setSessionChecked(true);
+        return;
+      }
+
+      const { data, error } = await supabase.auth.getSession();
+      if (error || !data.session) {
+        router.push('/auth/login');
+        return;
+      }
+
+      setStatus(`Вход выполнен как ${data.session.user.email}`);
+      setSessionChecked(true);
+    }
+
+    checkSession();
+  }, [router, supabase]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -18,7 +46,7 @@ export default function UploadPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!file) {
       setMessage({ type: 'error', text: 'Выберите файл' });
       return;
@@ -30,7 +58,7 @@ export default function UploadPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/upload/sales', {
+      const response = await fetch('/api/supabase/import-sales', {
         method: 'POST',
         body: formData,
       });
@@ -38,11 +66,11 @@ export default function UploadPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        setMessage({ type: 'error', text: data.message || 'Ошибка загрузки' });
+        setMessage({ type: 'error', text: data.error || 'Ошибка загрузки' });
       } else {
-        setMessage({ 
-          type: 'success', 
-          text: `✅ Загружено успешно! Добавлено ${data.count} записей.` 
+        setMessage({
+          type: 'success',
+          text: `✅ Импорт завершён. Создано ${data.totalOrders} заказов.`,
         });
         setFile(null);
         (document.querySelector('input[type="file"]') as HTMLInputElement).value = '';
@@ -65,6 +93,7 @@ export default function UploadPage() {
         <div className={styles.card}>
           <h1>📤 Загрузка данных</h1>
           <p className={styles.subtitle}>Импортируйте данные из Excel файла</p>
+          <p>{status}</p>
 
           {message && (
             <div className={`${styles.message} ${styles[message.type]}`}>
@@ -81,6 +110,7 @@ export default function UploadPage() {
                   accept=".xlsx,.xls,.csv"
                   onChange={handleFileChange}
                   className={styles.fileInputHidden}
+                  disabled={!sessionChecked}
                 />
                 <span className={styles.uploadIcon}>📁</span>
                 <span className={styles.uploadText}>
@@ -92,10 +122,10 @@ export default function UploadPage() {
               </label>
             </div>
 
-            <button 
-              type="submit" 
-              className={styles.button} 
-              disabled={!file || loading}
+            <button
+              type="submit"
+              className={styles.button}
+              disabled={!file || loading || !sessionChecked}
             >
               {loading ? '⏳ Загрузка...' : '📤 Загрузить файл'}
             </button>

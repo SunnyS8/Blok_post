@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { getSupabaseClient } from '@/lib/supabaseClient';
 import styles from './login.module.css';
 
 export default function LoginPage() {
@@ -10,37 +11,37 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const supabase = getSupabaseClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.message || 'Ошибка входа');
-        setLoading(false);
-        return;
-      }
-
-      // Сохранить токен в localStorage
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
-      // Перенаправить в дашборд
-      router.push('/dashboard');
-    } catch (err) {
-      setError('Ошибка подключения к серверу');
+    if (!supabase) {
+      setError('Supabase не настроен. Проверьте переменные окружения.');
       setLoading(false);
+      return;
     }
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    setLoading(false);
+
+    if (error) {
+      setError(error.message || 'Ошибка входа');
+      return;
+    }
+
+    if (!data.session) {
+      setError('Не удалось войти. Проверьте данные.');
+      return;
+    }
+
+    router.push('/dashboard');
   };
 
   const autofill = (email: string, password: string) => {

@@ -3,16 +3,23 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { getSupabaseClient } from '@/lib/supabaseClient';
 
 export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Если пользователь уже авторизован, перенаправить в дашборд
-    const token = localStorage.getItem('token');
-    if (token) {
-      router.push('/dashboard');
+    async function checkSession() {
+      const supabase = getSupabaseClient();
+      if (!supabase) return;
+
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        router.push('/dashboard');
+      }
     }
+
+    checkSession();
   }, [router]);
 
   return (
